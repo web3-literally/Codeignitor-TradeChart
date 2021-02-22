@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+
+    <title>TradingView Charting Library demo</title>
+
+    <!-- Fix for iOS Safari zooming bug -->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+    <script type="text/javascript" src="charting_library/charting_library.standalone.js"></script>
+    <script type="text/javascript" src="datafeeds/udf/dist/polyfills.js"></script>
+    <script type="text/javascript" src="datafeeds/udf/dist/bundle.js"></script>
+
+    <script type="text/javascript">
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
+        function initOnReady() {
+            var widget = window.tvWidget = new TradingView.widget({
+                // debug: true, // uncomment this line to see Library errors and warnings in the console
+                fullscreen: true,
+                symbol: 'EUR/USD',
+                interval: '1D',
+                container_id: "tv_chart_container",
+
+                //	BEWARE: no trailing slash is expected in feed URL
+                //datafeed: new Datafeeds.UDFCompatibleDatafeed("https://localhost"),
+                datafeed: new Datafeeds.UDFCompatibleDatafeed("https://infinity-marketanalyzer.com", 10000),
+                library_path: "charting_library/",
+                locale: getParameterByName('lang') || "en",
+
+                disabled_features: ["use_localstorage_for_settings"],
+                enabled_features: ["study_templates"],
+                charts_storage_url: 'https://saveload.tradingview.com',
+                charts_storage_api_version: "1.1",
+                client_id: 'infinity-tradingview.com',
+                user_id: 'public_user_id',
+                theme: getParameterByName('theme'),
+                custom_indicators_getter: function(PineJS) {
+                    return Promise.resolve([{
+                        name: "Bar Colorer Demo",
+                        metainfo: {
+                            _metainfoVersion: 42,
+
+                            id: "BarColoring@tv-basicstudies-1",
+
+                            name: "BarColoring",
+                            description: "Bar Colorer Demo",
+                            shortDescription: "BarColoring",
+                            scriptIdPart: "",
+                            is_price_study: true,
+                            is_hidden_study: false,
+                            isCustomIndicator: true,
+
+                            isTVScript: false,
+                            isTVScriptStub: false,
+                            defaults: {
+                                precision: 4,
+                                palettes: {
+                                    palette_0: {
+                                        // palette colors
+                                        // change it to the default colors that you prefer,
+                                        // but note that the user can change them in the Style tab
+                                        // of indicator properties
+                                        colors: [{
+                                            color: "#FFFF00"
+                                        }, {
+                                            color: "#0000FF"
+                                        }]
+                                    }
+                                }
+                            },
+                            inputs: [],
+                            plots: [{
+                                id: "plot_0",
+
+                                // plot type should be set to 'bar_colorer'
+                                type: "bar_colorer",
+
+                                // this is the name of the palette that is defined
+                                // in 'palettes' and 'defaults.palettes' sections
+                                palette: "palette_0"
+                            }],
+                            palettes: {
+                                palette_0: {
+                                    colors: [{
+                                        name: "Color 0"
+                                    }, {
+                                        name: "Color 1"
+                                    }],
+
+                                    // the mapping between the values that
+                                    // are returned by the script and palette colors
+                                    valToIndex: {
+                                        100: 0,
+                                        200: 1
+                                    }
+                                }
+                            }
+                        },
+                        constructor: function() {
+                            this.main = function(context, input) {
+                                this._context = context;
+                                this._input = input;
+
+                                var valueForColor0 = 100;
+                                var valueForColor1 = 200;
+
+                                // perform your calculations here and return one of the constants
+                                // that is specified as a key in 'valToIndex' mapping
+                                var result =
+                                    Math.random() * 100 % 2 > 1 ? // we randomly select one of the color values
+                                    valueForColor0 : valueForColor1;
+
+                                return [result];
+                            }
+                        }
+                    }]);
+                },
+            });
+
+        };
+
+        window.addEventListener('DOMContentLoaded', initOnReady, false);
+    </script>
+
+</head>
+
+<body style="margin:0px;">
+    <div id="tv_chart_container"></div>
+</body>
+
+</html>

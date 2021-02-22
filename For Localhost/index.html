@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+
+    <title>TradingView Charting Library demo</title>
+
+    <!-- Fix for iOS Safari zooming bug -->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+    <script type="text/javascript" src="charting_library/charting_library.standalone.js"></script>
+    <script type="text/javascript" src="datafeeds/udf/dist/polyfills.js"></script>
+    <script type="text/javascript" src="datafeeds/udf/dist/bundle.js"></script>
+
+    <script type="text/javascript">
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
+        function initOnReady() {
+            var widget = window.tvWidget = new TradingView.widget({
+                // debug: true, // uncomment this line to see Library errors and warnings in the console
+                fullscreen: true,
+                symbol: 'EUR/USD',
+                interval: '1D',
+                container_id: "tv_chart_container",
+
+                //	BEWARE: no trailing slash is expected in feed URL
+                datafeed: new Datafeeds.UDFCompatibleDatafeed("http://localhost:8443"),
+                // datafeed: new Datafeeds.UDFCompatibleDatafeed("https://infinity-marketanalyzer.com", 10000),
+                library_path: "charting_library/",
+                locale: getParameterByName('lang') || "en",
+
+                disabled_features: ["use_localstorage_for_settings"],
+                enabled_features: ["study_templates"],
+                charts_storage_url: 'https://saveload.tradingview.com',
+                charts_storage_api_version: "1.1",
+                client_id: 'infinity-tradingview.com',
+                user_id: 'public_user_id',
+                theme: getParameterByName('theme'),
+                // custom_indicators_getter: function(PineJS) {
+                //     return Promise.resolve([{
+                //         name: "GAP based S/R",
+                //         metainfo: {
+                //             _metainfoVersion: 27,
+                //             id: "GAP based S/R@tv-basicstudies-1",
+                //             scriptIdPart: "",
+                //             name: "GAP based S/R",
+                //             description: "GAP based S/R",
+                //             shortDescription: "GAP based S/R",
+                //             isTVScript: !1,
+                //             isTVScriptStub: !1,
+                //             is_hidden_study: !1,
+                //             is_price_study: !0,
+
+                //             defaults: {
+                //                 styles: {
+                //                     plot_0: {
+                //                         linestyle: 0,
+                //                         linewidth: 1,
+                //                         plottype: 0,
+                //                         trackPrice: !1,
+                //                         transparency: 35,
+                //                         visible: !0,
+                //                         color: "#FF0000"
+                //                     },
+                //                     plot_1: {
+                //                         linestyle: 0,
+                //                         linewidth: 1,
+                //                         plottype: 0,
+                //                         trackPrice: !1,
+                //                         transparency: 35,
+                //                         visible: !0,
+                //                         color: "#008000"
+                //                     },
+                //                     plot_2: {
+                //                         linestyle: 0,
+                //                         linewidth: 4,
+                //                         plottype: 3,
+                //                         trackPrice: !1,
+                //                         transparency: 35,
+                //                         visible: !0,
+                //                         color: "#000080"
+                //                     }
+                //                 },
+                //                 precision: 4,
+                //                 inputs: {
+                //                     in_0: 9,
+                //                     in_1: 26
+                //                 }
+                //             },
+                //             plots: [{
+                //                 id: "plot_0",
+                //                 type: "line"
+                //             }, {
+                //                 id: "plot_1",
+                //                 type: "line"
+                //             }, {
+                //                 id: "plot_2",
+                //                 type: "line"
+                //             }],
+                //             styles: {
+                //                 plot_0: {
+                //                     title: "Short",
+                //                     histogramBase: 0,
+                //                     joinPoints: !1
+                //                 },
+                //                 plot_1: {
+                //                     title: "Long",
+                //                     histogramBase: 0,
+                //                     joinPoints: !1
+                //                 },
+                //                 plot_2: {
+                //                     title: "Crosses",
+                //                     histogramBase: 0,
+                //                     joinPoints: !1
+                //                 }
+                //             },
+
+
+                //             inputs: [{
+                //                 id: "in_0",
+                //                 name: "Short",
+                //                 defval: 9,
+                //                 type: "integer",
+                //                 min: 1,
+                //                 max: 2e3
+                //             }, {
+                //                 id: "in_1",
+                //                 name: "Long",
+                //                 defval: 26,
+                //                 type: "integer",
+                //                 min: 1,
+                //                 max: 2e3
+                //             }],
+
+                //         },
+                //         constructor: function() {
+                //             this.f_0 = function(e, t) {
+                //                 return e ? t : PineJS.Std.na()
+                //             }, this.main = function(e, t) {
+                //                 this._context = e, this._input = t;
+                //                 var i = this._input(0),
+                //                     n = this._input(1),
+                //                     o = PineJS.Std.close(this._context),
+                //                     s = this._context.new_var(o),
+                //                     a = PineJS.Std.sma(s, i, this._context),
+                //                     l = this._context.new_var(o),
+                //                     c = PineJS.Std.sma(l, n, this._context),
+                //                     u = a,
+                //                     h = c,
+                //                     d = PineJS.Std.cross(a, c, this._context);
+                //                 return [u, h, this.f_0(d, a)]
+                //             }
+                //         }
+                //     }]);
+                // },
+            });
+
+        };
+
+        window.addEventListener('DOMContentLoaded', initOnReady, false);
+    </script>
+
+</head>
+
+<body style="margin:0px;">
+    <div id="tv_chart_container"></div>
+</body>
+
+</html>
